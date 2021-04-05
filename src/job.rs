@@ -767,7 +767,7 @@ impl Job {
             Config::ConfiguredInboxFolder,
             Config::ConfiguredMvboxFolder,
         ])
-        .filter_map(|c| context.get_config(*c))
+        .filter_map(|c| async move { context.get_config(*c).await.ok_or_log(context).flatten() })
         .collect()
         .await;
 
