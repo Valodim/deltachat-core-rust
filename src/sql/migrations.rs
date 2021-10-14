@@ -487,7 +487,11 @@ paramsv![]
         )
         .await?;
     }
-
+    if dbversion < 80 {
+        info!(context, "[migration] v80");
+        sql.execute_migration("ALTER TABLE msgs ADD COLUMN hop_info TEXT DEFAULT '';", 80)
+            .await?;
+    }
     Ok((
         recalc_fingerprints,
         update_icons,
