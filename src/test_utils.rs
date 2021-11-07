@@ -170,6 +170,19 @@ impl TestContext {
         t
     }
 
+    /// Creates a new configured [`TestContext`].
+    ///
+    /// This is a shortcut which configures fiona@example.net with a fixed key.
+    pub async fn new_fiona() -> Self {
+        let t = Self::with_name("fiona").await;
+        let keypair = fiona_keypair();
+        t.configure_addr(&keypair.addr.to_string()).await;
+        key::store_self_keypair(&t, &keypair, key::KeyPairUse::Default)
+            .await
+            .expect("Failed to save Fiona's key");
+        t
+    }
+
     /// Sets a name for this [`TestContext`] if one isn't yet set.
     ///
     /// This will show up in events logged in the test output.
@@ -573,6 +586,24 @@ pub fn bob_keypair() -> key::KeyPair {
         key::SignedPublicKey::from_base64(include_str!("../test-data/key/bob-public.asc")).unwrap();
     let secret =
         key::SignedSecretKey::from_base64(include_str!("../test-data/key/bob-secret.asc")).unwrap();
+    key::KeyPair {
+        addr,
+        public,
+        secret,
+    }
+}
+
+/// Load a pre-generated keypair for fiona@example.net from disk.
+///
+/// Like [alice_keypair] but a different key and identity.
+pub fn fiona_keypair() -> key::KeyPair {
+    let addr = EmailAddress::new("fiona@example.net").unwrap();
+    let public =
+        key::SignedPublicKey::from_base64(include_str!("../test-data/key/fiona-public.asc"))
+            .unwrap();
+    let secret =
+        key::SignedSecretKey::from_base64(include_str!("../test-data/key/fiona-secret.asc"))
+            .unwrap();
     key::KeyPair {
         addr,
         public,
