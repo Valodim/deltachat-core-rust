@@ -116,6 +116,10 @@ harness = false
 name = "search_msgs"
 harness = false
 
+[[bench]]
+name = "receive_emails"
+harness = false
+
 [features]
 default = ["vendored"]
 internals = []
