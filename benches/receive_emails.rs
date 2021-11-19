@@ -1,11 +1,14 @@
 use std::convert::TryInto;
 
 use async_std::task::block_on;
-use criterion::{black_box, criterion_group, criterion_main, BatchSize, Criterion};
+use criterion::{
+    async_executor::AsyncStdExecutor, black_box, criterion_group, criterion_main, BatchSize,
+    Criterion,
+};
 use deltachat::{config::Config, context::Context, dc_receive_imf::dc_receive_imf};
 use tempfile::tempdir;
 
-async fn recv_emails(context: &Context) {
+async fn recv_emails(context: Context) {
     for (i, bytes) in [
         include_bytes!("../test-data/message/allinkl-quote.eml").as_ref(),
         include_bytes!("../test-data/message/apple_cid_jpg.eml").as_ref(),
@@ -82,8 +85,8 @@ async fn recv_emails(context: &Context) {
 }
 
 fn criterion_benchmark(c: &mut Criterion) {
-    c.bench_function("Receive 1000 messages", |b| {
-        b.iter_batched_ref(
+    c.bench_function("Receive many messages", |b| {
+        b.to_async(AsyncStdExecutor).iter_batched(
             || {
                 block_on(async {
                     let dir = tempdir().unwrap();
@@ -106,7 +109,7 @@ fn criterion_benchmark(c: &mut Criterion) {
                     context
                 })
             },
-            |context| block_on(async { recv_emails(black_box(&context)).await }),
+            |context| recv_emails(black_box(context)),
             BatchSize::LargeInput,
         );
     });
