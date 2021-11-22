@@ -945,6 +945,49 @@ uint32_t dc_send_videochat_invitation (dc_context_t* context, uint32_t chat_id);
 
 
 /**
+ * An w30-message-object sends data to its other instances.
+ *
+ * In js-land, that would be mapped to sth. as:
+ * ```
+ * success = window.sendStatusUpdate('move A3 B4', '{"action":"move","src":"A3","dest":"B4"}');
+ * ```
+ * `context` and `msg_id` is not needed in js as that is unique within an w30 instance.
+ * See dc_get_w30_status_update() for the receiving counterpart.
+ *
+ * @memberof dc_context_t
+ * @param context The context object
+ * @param msg_id id of the message-object with the w30 instance
+ * @param descr user-visible description of the json-data,
+ *     in case of a chess game, eg. the move.
+ * @param json program-readable data, the actual payload
+ * @return 1=success, 0=error
+ */
+int dc_send_w30_status_update (dc_context_t* context, uint32_t msg_id, const char* descr, const char* json);
+
+
+/**
+ * An w30-message-object receives data from its other instances.
+ *
+ * In js-land, that would be mapped to sth. as:
+ * ```
+ * window.receiveStatusUpdate(function (data) {
+ *    if (data.action === "move") {
+ *       print(data.src)
+ *       print(data.dest)
+ *    }
+ * });
+ * ```
+ *
+ * @memberof dc_context_t
+ * @param context The context object
+ * @param msg_id
+ * @param status_update_id a concrete status update id
+ *     or 0 to get all status updates for the given msg_id
+ * @return Received data, this is the `json` parameter of dc_send_w30_status_update()
+ */
+char* dc_get_w30_status_update (dc_context_t* context, uint32_t msg_id, uint32_t status_update_id);
+
+/**
  * Save a draft for a chat in the database.
  *
  * The UI should call this function if the user has prepared a message
@@ -4698,6 +4741,16 @@ int64_t          dc_lot_get_timestamp     (const dc_lot_t* lot);
  */
 #define DC_MSG_VIDEOCHAT_INVITATION 70
 
+
+/**
+ * w30-Message.
+ * Message with HTML5, CSS and related content.
+ *
+ * To send data to an w30-object, use dc_send_w30_status_update()
+ */
+#define DC_MSG_W30    80
+
+
 /**
  * @}
  */
@@ -5389,6 +5442,17 @@ void dc_event_unref(dc_event_t* event);
  * You can get the new avatar file with `dc_get_config(context, "selfavatar")`.
  */
 #define DC_EVENT_SELFAVATAR_CHANGED               2110
+
+
+/**
+ * w30-data received.
+ * To get the received data, use dc_get_w30_status_update().
+ * To send data, use dc_send_w30_status_update().
+ *
+ * @param data1 (int) msg_id
+ * @param data2 (int) status_update_id
+ */
+#define DC_EVENT_W30_STATUS_UPDATE                2120
 
 
 /**
