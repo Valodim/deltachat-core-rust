@@ -1227,6 +1227,7 @@ pub fn guess_msgtype_from_suffix(path: &Path) -> Option<(Viewtype, &str)> {
         "ttf" => (Viewtype::File, "font/ttf"),
         "vcard" => (Viewtype::File, "text/vcard"),
         "vcf" => (Viewtype::File, "text/vcard"),
+        "w30" => (Viewtype::W30, "application/html+w30"),
         "wav" => (Viewtype::File, "audio/wav"),
         "weba" => (Viewtype::File, "audio/webm"),
         "webm" => (Viewtype::Video, "video/webm"),
@@ -1795,6 +1796,14 @@ mod tests {
         assert_eq!(
             guess_msgtype_from_suffix(Path::new("foo/bar-sth.mp3")),
             Some((Viewtype::Audio, "audio/mpeg"))
+        );
+        assert_eq!(
+            guess_msgtype_from_suffix(Path::new("foo/file.html")),
+            Some((Viewtype::File, "text/html"))
+        );
+        assert_eq!(
+            guess_msgtype_from_suffix(Path::new("foo/file.w30")),
+            Some((Viewtype::W30, "application/html+w30"))
         );
     }
 

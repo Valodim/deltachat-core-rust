@@ -1723,6 +1723,7 @@ pub(crate) fn msgtype_has_file(msgtype: Viewtype) -> bool {
         Viewtype::Video => true,
         Viewtype::File => true,
         Viewtype::VideochatInvitation => false,
+        Viewtype::W30 => true,
     }
 }
 
