@@ -497,6 +497,18 @@ item TEXT DEFAULT '');"#,
         )
         .await?;
     }
+    if dbversion < 81 {
+        info!(context, "[migration] v81");
+        sql.execute_migration(
+            r#"CREATE TABLE w30_status_updates (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+msg_id INTEGER,
+json TEXT DEFAULT '');
+CREATE INDEX w30_status_updates_index1 ON w30_status_updates (msg_id);"#,
+            81,
+        )
+        .await?;
+    }
 
     Ok((
         recalc_fingerprints,
