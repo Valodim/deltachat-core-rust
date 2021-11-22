@@ -85,6 +85,7 @@ pub mod stock_str;
 mod sync;
 mod token;
 mod update_helper;
+mod w30;
 #[macro_use]
 mod dehtml;
 mod color;
