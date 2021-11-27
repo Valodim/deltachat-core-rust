@@ -523,6 +523,10 @@ impl Message {
         self.chat_id
     }
 
+    pub fn get_rfc724_mid(&self) -> &str {
+        self.rfc724_mid.as_str()
+    }
+
     pub fn get_viewtype(&self) -> Viewtype {
         self.viewtype
     }
