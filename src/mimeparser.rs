@@ -1337,8 +1337,8 @@ impl MimeMessage {
                 match message::handle_mdn(context, from_id, original_message_id, sent_timestamp)
                     .await
                 {
-                    Ok(Some((chat_id, msg_id))) => {
-                        context.emit_event(EventType::MsgRead { chat_id, msg_id });
+                    Ok(Some((chat_id, msg_id, contact_id))) => {
+                        context.emit_event(EventType::MsgRead { chat_id, msg_id, contact_id });
                     }
                     Ok(None) => {}
                     Err(err) => {

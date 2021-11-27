@@ -229,7 +229,7 @@ pub enum EventType {
     /// A single message is read by the receiver. State changed from DC_STATE_OUT_DELIVERED to
     /// DC_STATE_OUT_MDN_RCVD, see dc_msg_get_state().
     #[strum(props(id = "2015"))]
-    MsgRead { chat_id: ChatId, msg_id: MsgId },
+    MsgRead { chat_id: ChatId, msg_id: MsgId, contact_id: u32 },
 
     /// Chat changed.  The name or the image of a chat group was changed or members were added or removed.
     /// Or the verify state of a chat has changed.

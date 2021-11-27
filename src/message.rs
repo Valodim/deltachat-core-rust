@@ -1464,7 +1464,7 @@ pub async fn handle_mdn(
     from_id: u32,
     rfc724_mid: &str,
     timestamp_sent: i64,
-) -> Result<Option<(ChatId, MsgId)>> {
+) -> Result<Option<(ChatId, MsgId, u32)>> {
     if from_id == DC_CONTACT_ID_SELF {
         warn!(
             context,
@@ -1532,10 +1532,8 @@ pub async fn handle_mdn(
         || msg_state == MessageState::OutDelivered
     {
         update_msg_state(context, msg_id, MessageState::OutMdnRcvd).await;
-        Ok(Some((chat_id, msg_id)))
-    } else {
-        Ok(None)
     }
+    Ok(Some((chat_id, msg_id, from_id)))
 }
 
 /// Marks a message as failed after an ndn (non-delivery-notification) arrived.
