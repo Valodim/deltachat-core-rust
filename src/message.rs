@@ -551,6 +551,10 @@ impl Message {
         &self.subject
     }
 
+    pub fn has_in_reply_to(&self) -> bool {
+        self.in_reply_to.is_some()
+    }
+
     pub fn get_filename(&self) -> Option<String> {
         self.param
             .get(Param::File)
