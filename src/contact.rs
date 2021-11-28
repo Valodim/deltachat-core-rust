@@ -814,10 +814,11 @@ impl Contact {
                     EncryptPreference::Reset => stock_str::encr_none(context).await,
                 };
 
+                let fingerprints = stock_str::finger_prints(context).await;
                 ret += &format!(
                     "{}\n{}:",
                     stock_message,
-                    stock_str::finger_prints(context).await
+                    fingerprints,
                 );
 
                 let fingerprint_self = SignedPublicKey::load_self(context)
