@@ -796,6 +796,10 @@ impl Message {
         self.text = text;
     }
 
+    pub fn set_subject(&mut self, subject: String) {
+        self.subject = subject;
+    }
+
     pub fn set_file(&mut self, file: impl AsRef<str>, filemime: Option<&str>) {
         self.param.set(Param::File, file);
         if let Some(filemime) = filemime {
@@ -912,7 +916,7 @@ impl Message {
             .ok_or_log(context);
     }
 
-    pub(crate) async fn update_subject(&self, context: &Context) {
+    pub async fn update_subject(&self, context: &Context) {
         context
             .sql
             .execute(
