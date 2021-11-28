@@ -64,6 +64,9 @@ pub enum Config {
     #[strum(props(default = "1"))]
     E2eeEnabled,
 
+    #[strum(props(default = "0"))]
+    E2eeForce,
+
     #[strum(props(default = "1"))]
     MdnsEnabled,
 

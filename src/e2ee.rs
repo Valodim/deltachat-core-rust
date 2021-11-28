@@ -19,6 +19,7 @@ use crate::pgp;
 #[derive(Debug)]
 pub struct EncryptHelper {
     pub prefer_encrypt: EncryptPreference,
+    force_preference: bool,
     pub addr: String,
     pub public_key: SignedPublicKey,
 }
@@ -28,6 +29,7 @@ impl EncryptHelper {
         let prefer_encrypt =
             EncryptPreference::from_i32(context.get_config_int(Config::E2eeEnabled).await?)
                 .unwrap_or_default();
+        let force_preference = context.get_config_bool(Config::E2eeForce).await?;
         let addr = match context.get_config(Config::ConfiguredAddr).await? {
             None => {
                 bail!("addr not configured!");
@@ -39,6 +41,7 @@ impl EncryptHelper {
 
         Ok(EncryptHelper {
             prefer_encrypt,
+            force_preference,
             addr,
             public_key,
         })
@@ -100,11 +103,17 @@ impl EncryptHelper {
             }
         }
 
-        // Count number of recipients, including self.
-        // This does not depend on whether we send a copy to self or not.
-        let recipients_count = peerstates.len() + 1;
+        let want_encrypt = if self.force_preference {
+            // Ignore preferences of others.
+            self.prefer_encrypt == EncryptPreference::Mutual
+        } else {
+            // Count number of recipients, including self.
+            // This does not depend on whether we send a copy to self or not.
+            let recipients_count = peerstates.len() + 1;
+            2 * prefer_encrypt_count > recipients_count
+        };
 
-        Ok(e2ee_guaranteed || 2 * prefer_encrypt_count > recipients_count)
+        Ok(e2ee_guaranteed || want_encrypt)
     }
 
     /// Tries to encrypt the passed in `mail`.
